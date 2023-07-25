@@ -5,10 +5,14 @@ import { loginSchema } from "../schema/loginSchema";
 import { collection, where, query, getDocs } from "firebase/firestore";
 
 import { db } from "../../../../firebase/firebase";
+import { setCookie } from "cookies-next";
+
+import { useDispatch, useSelector } from "react-redux";
+import { logUser } from "@/components/store/action";
 
 export const useLogin = () => {
   const router = useRouter();
-
+  const dispatch = useDispatch();
   const { Success, Warn } = useToastMessages();
   const initialValues = {
     email: "",
@@ -31,17 +35,17 @@ export const useLogin = () => {
       );
 
       const querySnapshot = await getDocs(q);
-      // console.log(" i am info:=",querySnapshot.docs.id);
+
       if (!querySnapshot.empty) {
         Success("You are logged in");
-        // router.push(`/profile/${email}`)
 
         let id;
         querySnapshot.forEach((doc) => {
-          id=({ ...doc.data(), id: doc.id });
+          id = { ...doc.data(), id: doc.id };
         });
-        router.push(`/profile/${id.id}`)
-     
+
+        await dispatch(logUser(id.id));
+        router.push(`/profile/${id.id}`);
       } else {
         Warn("Invalid email or password");
       }

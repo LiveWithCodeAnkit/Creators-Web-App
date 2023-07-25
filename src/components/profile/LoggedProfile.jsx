@@ -31,7 +31,7 @@ const LoggedProfile = () => {
   };
   useEffect(() => {
     fetchPost();
-  }, []);
+  });
 
   const filteredUsers = users.filter(
     (user) =>

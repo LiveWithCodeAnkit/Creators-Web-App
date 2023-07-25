@@ -2,14 +2,18 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
 
 import { useRegister } from "./hook/useRegister";
+import { useParams } from "next/navigation";
 
 const Register = () => {
   const { initialValues, schema, handleSubmit, navigate } = useRegister();
+
+  const params = useParams();
 
   return (
     <>
       <Formik
         initialValues={initialValues}
+        enableReinitialize
         validationSchema={schema}
         onSubmit={handleSubmit}
       >
@@ -17,18 +21,29 @@ const Register = () => {
           <main className="flex lg:h-[100vh]">
             <div className="w-full  p-8 md:p-14 flex items-center justify-center ">
               <div className="p-8 w-[600px]">
-                <h1 className="text-6xl font-semibold">Sign Up</h1>
-                <p className="mt-6 ml-1">
-                  Already have an account ?{" "}
-                  <span
-                    className="underline hover:text-blue-400 cursor-pointer"
-                    onClick={() => {
-                      navigate("login");
-                    }}
-                  >
-                    Login
-                  </span>
-                </p>
+                <h1 className="text-6xl font-semibold">
+                  {params.register ? "Update Your Profile" : "Sign Up"}
+                </h1>
+
+                {params.register ? (
+                  ""
+                ) : (
+                  <>
+                    {" "}
+                    <p className="mt-6 ml-1">
+                      Already have an account ?{" "}
+                      <span
+                        className="underline hover:text-blue-400 cursor-pointer"
+                        onClick={() => {
+                          navigate("login");
+                        }}
+                      >
+                        Login
+                      </span>
+                    </p>
+                  </>
+                )}
+
                 <div className="mt-10 pl-1 flex flex-col">
                   <label>Name</label>
                   <Field
@@ -141,6 +156,7 @@ const Register = () => {
                     name="email"
                     id="email"
                     className="font-medium border-b border-black p-4 outline-0 focus-within:border-blue-400"
+                    disabled={params.register?"true":"false"}
                   />
                   <ErrorMessage
                     name="email"
@@ -155,6 +171,7 @@ const Register = () => {
                     id="password"
                     name="password"
                     className="font-medium border-b border-black p-4 outline-0 focus-within:border-blue-400"
+                    disabled={params.register?"true":"false"}
                   />
                   <ErrorMessage
                     name="password"
@@ -166,7 +183,7 @@ const Register = () => {
                   type="submit"
                   className="bg-black text-white w-44 py-4 mt-10 rounded-full transition-transform hover:bg-black/[0.8] active:scale-90"
                 >
-                  Sign Up
+                  {params.register ? "Update" : "Sign Up"}
                 </button>
               </div>
             </div>

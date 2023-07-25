@@ -3,18 +3,26 @@ import Link from "next/link";
 import React, { useEffect } from "react";
 import { SiFirebase } from "react-icons/si";
 import { TbBrandNextjs } from "react-icons/tb";
-import { useAuth } from "../../../firebase/auth";
 import { useRouter } from "next/navigation";
 import { useToastMessages } from "@/components/message/useToastMessages";
+import { useDispatch, useSelector } from "react-redux";
+import { logOut } from "../store/action";
+
 const Header = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const { Info } = useToastMessages();
-  // const { authUser, isLoading, signOut } = useAuth();
-  // useEffect(() => {
-  //   if (!isLoading && !authUser) {
-  //     router.push("/");
-  //   }
-  // }, [isLoading, authUser]);
+
+  const authUser = useSelector((state) => state.listStream.authUser);
+
+  console.log(" i am header :=", authUser);
+
+  const handleLogout = async () => {
+    console.log("i am logout function:=");
+    await dispatch(logOut());
+    Info("Logged Out !");
+    router.push("/login");
+  };
 
   return (
     <>
@@ -26,28 +34,34 @@ const Header = () => {
 
         <nav>
           <ul className="flex items-center gap-10 text-2xl text-white font-semibold">
-          
-              <li>
-                <Link href="/register">Register</Link>
-              </li>
-         
-              <li>
-                <Link href="/login">Login</Link>
-              </li>
-          
+            {authUser ? (
+              <>
+                <Link href="/self">Profile</Link>
+              </>
+            ) : (
+              <>
+                <li>
+                  <Link href="/register">Register</Link>
+                </li>
+                <li>
+                  <Link href="/login">Login</Link>
+                </li>
+              </>
+            )}
           </ul>
         </nav>
-       
-          {/* <button
+        {authUser ? (
+          <button
             className="font-Pacifico text-xl rounded-lg hover:text-white w-auto p-2 bg-[#7b9194]"
             onClick={() => {
-              signOut();
-              Info("Logged Out !");
+              handleLogout();
             }}
           >
             Logout
-          </button> */}
-      
+          </button>
+        ) : (
+          <></>
+        )}
       </div>
     </>
   );
